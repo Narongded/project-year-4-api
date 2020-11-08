@@ -7,10 +7,19 @@ import generator from 'generate-password'
 import { adminAuth, permit } from '../service/passportAdmin.js';
 import { upload } from '../service/handlefile.js'
 import { rejects } from 'assert';
-
+import con from '../manage/connectdb.js'
 const router = express.Router();
 const app = express();
 
+
+router.get('/getfile-pdf/:pdfid', (req, res, next) => {
+    const sql = `SELECT * FROM pdf WHERE pdfid = ${req.params.pdfid} `;
+
+    con.query(sql, (err, result, field) => {
+
+        res.status(200).json({ data: result, status: 'Success' })
+    });
+})
 // router.get('/agenda/getall', adminAuth(), permit(['admin', 'staff', 'council', 'guest']), async (req, res, next) => {
 
 //   await modelagenda.find({}, (err, doc) => {

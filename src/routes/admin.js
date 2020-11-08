@@ -6,36 +6,66 @@ import path, { resolve } from 'path';
 import generator from 'generate-password'
 import { adminAuth, permit } from '../service/passportAdmin.js';
 import { upload } from '../service/handlefile.js'
-
-
+import con from '../manage/connectdb.js'
 const router = express.Router();
 const app = express();
 //-------------------------------------login----------------------------------
+router.post('/create-chapter', (req, res, next) => {
+    const sql = "INSERT INTO chapter (name,uid) VALUES ?";
+    const values = [
+        [
+            `${req.body.chaptername}`,
+            `${req.body.uid}`
 
-// router.post('/test', (req, res, next) => {
-//     const passwords = generator.generate({
-//         length: 4,
-//         numbers: true,
-//         uppercase: false
-//     });
-//     new modeluser({
-//         uid: uid(),
-//         username: uid(),
-//         password: bcrypt.hashSync(passwords, 10),
-//         nametitle: 'admin',
-//         firstname: 'admin',
-//         lastname: 'admin',
-//         position: 'admin',
-//         role: 'admin',
-//         note: 'admin',
-//     }).save(null, (err, doc) => {
+        ]
+    ];
+    con.query(sql, [values], (err, result) => {
 
-//         if (err) return res.status(400).json({ status: 'failed wrong data', err: err })
-//         res.status(200).json({ Depassword: passwords, doc, status: 'Success' })
-//     });
-// })
+        if (err || result.length === 0) return res.status(400).json({ status: 'failed wrong data' })
+        console.log("Number of records inserted: " + result.affectedRows);
+        res.status(200).json({ status: 'Success' })
+    });
+})
+router.get('/getall-chapter/:uid', (req, res, next) => {
+    const sql = `SELECT * FROM chapter WHERE uid = ${req.params.uid} `;
+
+    con.query(sql, (err, result, field) => {
+
+        res.status(200).json({ data: result, status: 'Success' })
+    });
+})
+
+router.post('/upload-pdf', (req, res, next) => {
+    if (req.files === null) return res.status(400).json({ status: 'File PDF not found' })
+    const namefile = uid() + '.pdf';
+    const filepdf = req.files.file
+    filepdf.mv(path.join(path.resolve(), '/src/public/pdf/') + namefile);
+    const sql = "INSERT INTO pdf (pdfname,role,chapterid,pdfpath) VALUES ?";
+    const values = [
+        [
+            `${req.body.pdfname}`,
+            `${req.body.role}`,
+            `${req.body.chapterid}`,
+            `${namefile}`
+        ]
+    ];
+    con.query(sql, [values], (err, result) => {
+        console.log(err)
+        if (err || result.length === 0) return res.status(400).json({ status: 'failed wrong data' })
+        console.log("Number of records inserted: " + result.affectedRows);
+        return res.status(200).json({ status: 'Success' })
+    });
+})
 
 
+router.get('/getfile-pdf/:chapterid', (req, res, next) => {
+    const sql = `SELECT * FROM pdf WHERE chapterid = ${req.params.chapterid} `;
+
+    con.query(sql, (err, result, field) => {
+
+        res.status(200).json({ data: result, status: 'Success' })
+    });
+})
 
 
 //---------------------------user manager-----------------------------------

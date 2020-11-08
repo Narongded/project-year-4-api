@@ -1,9 +1,10 @@
 import passport from 'passport';
 import passportJWT from 'passport-jwt';
 import jwt from 'jsonwebtoken'
+import con from '../manage/connectdb.js'
+import dotenv from 'dotenv'
 const JWTStrategy = passportJWT.Strategy
 const ExtractJWT = passportJWT.ExtractJwt
-import dotenv from 'dotenv'
 dotenv.config();
 export const adminAuth = () => {
 
@@ -12,12 +13,13 @@ export const adminAuth = () => {
         secretOrKey: 'your_jwt_secret'
     };
     const jwtAuth = new JWTStrategy(jwtOptions, async (payload, done) => {
-        await modeluser.find({ username: payload.username, uid: payload.uid }, (err, doc) => {
+        const sql = `SELECT * FROM alluser WHERE email = '${payload.email}' AND id = '${payload.id}' `;
 
-            // Can delete && payload.username !== process.env.MASTER_USER
-            if ((doc.length === 0 || err) && payload.username !== process.env.MASTER_USER) done(null, false)
+        con.query(sql, (err, result, field) => {
+            if (result.length === 0 || err) done(null, false)
             else done(null, true);
-        })
+        });
+
     });
     passport.use(jwtAuth);
     return passport.authenticate("jwt", { session: false });

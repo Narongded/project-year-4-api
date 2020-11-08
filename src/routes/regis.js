@@ -15,7 +15,7 @@ router.post('/', async (req, res, next) => {
             `${req.body.last_name}`,
             `${req.body.email}`,
             `${bcrypt.hashSync(req.body.password, 10)}`,
-            `teacher`
+            `${req.body.role}`,
         ]
     ];
     con.query(sql, [values], function (err, result) {
