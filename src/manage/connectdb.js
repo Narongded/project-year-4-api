@@ -15,8 +15,8 @@ dotenv.config();
 const con = mysql.createConnection({
 host: '127.0.0.1',
 user: 'root',
-password: '',
-database: 'test'
+password: 'password',
+database: 'studytool'
 });
 
 con.connect(function(err) {

@@ -28,8 +28,8 @@ app.use('/checktoken', checktokenRouter);
 app.use('/regis', regisRouter);
 app.use('/admin', adminRouter);
 app.use('/user', userRouter);
-app.listen(process.env.PORT || 3000, () => {
-  console.log('PORT: 3000')
+app.listen(process.env.PORT || 3001, () => {
+  console.log('PORT: 3001')
 })
 
 export default app
