@@ -26,6 +26,15 @@ router.post('/create-chapter', (req, res, next) => {
         res.status(200).json({ status: 'Success' })
     });
 })
+router.delete('/delete-chapter/:chapterid', (req, res, next) => {
+    const sql = `DELETE FROM chapter WHERE chapterid=${req.params.chapterid}`;
+    
+    con.query(sql, (err, result) => {
+
+        if (err || result.length === 0) return res.status(400).json({ status: 'failed wrong data' })
+        res.status(200).json({ status: 'Success' })
+    });
+})
 router.get('/getall-chapter/:uid', (req, res, next) => {
     const sql = `SELECT * FROM chapter WHERE uid = ${req.params.uid} `;
 
