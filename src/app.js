@@ -9,9 +9,8 @@ import adminRouter from './routes/admin.js';
 import loginRouter from './routes/login.js';
 import regisRouter from './routes/regis.js';
 import checktokenRouter from './routes/checktoken.js';
-import  fileUpload from 'express-fileupload'
+import fileUpload from 'express-fileupload'
 import './manage/connectdb.js'
-
 const app = express();
 
 app.use(fileUpload({

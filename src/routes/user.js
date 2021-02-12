@@ -13,7 +13,21 @@ const app = express();
 
 
 router.get('/getfile-pdf/:pdfid', (req, res, next) => {
-    const sql = `SELECT * FROM pdf WHERE pdfid = ${req.params.pdfid} `;
+    const sql = `SELECT * FROM pdf WHERE tpid = ${req.params.pdfid} `;
+
+    con.query(sql, (err, result, field) => {
+
+        res.status(200).json({ data: result, status: 'Success' })
+    });
+})
+
+router.get('/getchapter/:uid', (req, res, next) => {
+
+    const sql = `SELECT * 
+    FROM studentpdf
+    INNER JOIN pdf on studentpdf.teacherpdf_tpid = pdf.tpid
+    INNER JOIN chapter on chapter.cid = pdf.chapter_cid
+    WHERE studentpdf = ${req.params.uid}`;
 
     con.query(sql, (err, result, field) => {
 

@@ -10,7 +10,7 @@ export const adminAuth = () => {
 
     const jwtOptions = {
         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-        secretOrKey: 'your_jwt_secret'
+        secretOrKey: 'itkmitl'
     };
     const jwtAuth = new JWTStrategy(jwtOptions, async (payload, done) => {
         const sql = `SELECT * FROM alluser WHERE email = '${payload.email}' AND id = '${payload.id}' `;

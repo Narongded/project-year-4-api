@@ -28,7 +28,7 @@ router.post('/create-chapter', (req, res, next) => {
 })
 
 router.put('/update-chapter/:chapterid', (req, res, next) => {
-    const sql = `UPDATE chapter SET name = ? WHERE chapterid = ${req.params.chapterid}`;
+    const sql = `UPDATE chapter SET name = ? WHERE cid = ${req.params.chapterid}`;
     const values = [
         [
             `${req.body.chaptername}`,
@@ -42,8 +42,8 @@ router.put('/update-chapter/:chapterid', (req, res, next) => {
 })
 
 router.delete('/delete-chapter/:chapterid', (req, res, next) => {
-    const sql = `DELETE FROM chapter WHERE chapterid=${req.params.chapterid}`;
-    
+    const sql = `DELETE FROM chapter WHERE cid=${req.params.chapterid}`;
+
     con.query(sql, (err, result) => {
 
         if (err || result.length === 0) return res.status(400).json({ status: 'failed wrong data' })
@@ -65,11 +65,10 @@ router.post('/upload-pdf', (req, res, next) => {
     const namefile = uid() + '.pdf';
     const filepdf = req.files.file
     filepdf.mv(path.join(path.resolve(), '/src/public/pdf/') + namefile);
-    const sql = "INSERT INTO pdf (pdfname,role,chapterid,pdfpath) VALUES ?";
+    const sql = "INSERT INTO pdf (pdfname,chapter_cid,pdfpath) VALUES ?";
     const values = [
         [
             `${req.body.pdfname}`,
-            `${req.body.role}`,
             `${req.body.chapterid}`,
             `${namefile}`
         ]
@@ -84,17 +83,19 @@ router.post('/upload-pdf', (req, res, next) => {
 
 
 router.get('/getfile-pdf/:chapterid', (req, res, next) => {
-    const sql = `SELECT * FROM pdf WHERE chapterid = ${req.params.chapterid} `;
+  
+    const sql = `SELECT * FROM pdf WHERE chapter_cid = ${req.params.chapterid} `;
 
     con.query(sql, (err, result, field) => {
-
+     
+        if (err ) return res.status(400).json({ status: 'failed wrong data' })
         res.status(200).json({ data: result, status: 'Success' })
     });
 })
 
 router.delete('/delete-pdf/:pdfid', (req, res, next) => {
-    const sql = `DELETE FROM pdf WHERE pdfid=${req.params.pdfid}`;
-    
+    const sql = `DELETE FROM pdf WHERE tpid=${req.params.pdfid}`;
+
     con.query(sql, (err, result) => {
 
         if (err || result.length === 0) return res.status(400).json({ status: 'failed wrong data' })

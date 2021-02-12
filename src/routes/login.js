@@ -1,44 +1,35 @@
 import express from 'express';
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv'
 import con from '../manage/connectdb.js'
-dotenv.config();
+import { loginLdap, searchData } from '../service/ldap.js'
+import Cryptr from 'cryptr'
 const router = express.Router();
 
-router.post('/', (req, res, next) => {
+router.post('/', async (req, res, next) => {
 
-    const sql = `SELECT * FROM alluser WHERE email = '${req.body.email}'`;
-    
-    con.query(sql, (err, result, fields) => {
-        if (err || result.length === 0)  return res.status(400).json({ status: 'error wrong user or password' })
-        if (bcrypt.compare(result[0].password, req.body.password)) {
-            const resdata = {
-                firstname: result[0].firstname,
-                lastname: result[0].lastname,
-                email: result[0].email,
-                role: result[0].role,
-                uid : result[0].id,
-            }
-            const token = 'Bearer ' + jwt.sign(
-                {
-                    email: result[0].email, id: result[0].id, role: result[0].role
-                },
-                'your_jwt_secret',
-                {
-                    expiresIn: "6h",
-                }
-            )
-            return res.status(200).json({
-                status: 'Success',
-                data: resdata,
-                token: token
-            })
+    // const sql = `SELECT * FROM alluser WHERE email = '${req.body.email}'`;
+    searchData(req.body.email, req.body.password).then((result) => {
+        const cryptr = new Cryptr('secretepassword');
+        const encrypepassword = cryptr.encrypt(req.body.password);
+        let ldaprole = ''
+        result.description === "IT Student" ? ldaprole = "student" : ldaprole = "teacher"
+        const resdata = {
+            firstname: result.givenName,
+            lastname: result.sn,
+            email: result.userPrincipalName,
+            role: ldaprole
         }
-        else {
-            return res.status(400).json({ status: 'error wrong user or password' })
-        }
-    });
+        const token = 'Bearer ' + jwt.sign(
+            { email: req.body.email, password: encrypepassword },
+            'itkmitl',
+            { expiresIn: "6h" })
+        return res.status(200).json({
+            status: 'Success',
+            data: resdata,
+            token: token
+        })
+    }).catch((err) => res.status(400).json({ status: 'error wrong user or password' }))
 })
 
 
