@@ -6,21 +6,6 @@ dotenv.config();
 
 const loginLdap = (upn, password) => new Promise((resolve, reject) => {
     const client = ldapjs.createClient({ url: process.env.LDAP_URL, base: process.env.BASEDN });
-    client.bind(`${upn}@it.kmitl.ac.th`, password, (error) => {
-        if (error) {
-            reject('error')
-            client.unbind()
-            client.destroy()
-        }
-        else {
-            resolve('Authenticated successfully')
-            client.unbind()
-            client.destroy()
-        };
-    });
-})
-const searchData = (upn, password) => new Promise((resolve, reject) => {
-    const client = ldapjs.createClient({ url: process.env.LDAP_URL, base: process.env.BASEDN });
     const searchOptions = { filter: `(&(sAMAccountName=${upn}))`, scope: "sub" }
     client.bind(`${upn}@it.kmitl.ac.th`, password, (error) => {
         if (error) {
@@ -36,11 +21,11 @@ const searchData = (upn, password) => new Promise((resolve, reject) => {
             client.unbind()
             client.destroy()
         }
-        res.on("searchEntry", (entry) => {
+        else res.on("searchEntry", (entry) => {
             resolve(entry.object)
             client.unbind()
             client.destroy()
         });
     });
 })
-export { loginLdap, searchData }
+export { loginLdap }

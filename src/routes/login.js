@@ -2,13 +2,12 @@ import express from 'express';
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
 import con from '../manage/connectdb.js'
-import { loginLdap, searchData } from '../service/ldap.js'
+import { loginLdap } from '../service/ldap.js'
 import Cryptr from 'cryptr'
 const router = express.Router();
 
 router.post('/', async (req, res, next) => {
-
-    searchData(req.body.email, req.body.password).then((result) => {
+    loginLdap(req.body.email, req.body.password).then((result) => {
         const cryptr = new Cryptr('secretepassword');
         const encrypepassword = cryptr.encrypt(req.body.password);
         let ldaprole = ''

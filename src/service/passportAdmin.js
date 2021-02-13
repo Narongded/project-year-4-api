@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 import con from '../manage/connectdb.js'
 import Cryptr from 'cryptr'
 import dotenv from 'dotenv'
-import { loginLdap, searchData } from '../service/ldap.js'
+import { loginLdap } from '../service/ldap.js'
 const JWTStrategy = passportJWT.Strategy
 const ExtractJWT = passportJWT.ExtractJwt
 dotenv.config();
