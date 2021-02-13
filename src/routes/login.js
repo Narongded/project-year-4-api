@@ -8,7 +8,6 @@ const router = express.Router();
 
 router.post('/', async (req, res, next) => {
 
-    // const sql = `SELECT * FROM alluser WHERE email = '${req.body.email}'`;
     searchData(req.body.email, req.body.password).then((result) => {
         const cryptr = new Cryptr('secretepassword');
         const encrypepassword = cryptr.encrypt(req.body.password);
