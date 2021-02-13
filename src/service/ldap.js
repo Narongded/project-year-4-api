@@ -9,6 +9,8 @@ const loginLdap = (upn, password) => new Promise((resolve, reject) => {
     client.bind(`${upn}@it.kmitl.ac.th`, password, (error) => {
         if (error) {
             reject('error')
+            client.unbind()
+            client.destroy()
         }
         else {
             resolve('Authenticated successfully')
@@ -23,12 +25,16 @@ const searchData = (upn, password) => new Promise((resolve, reject) => {
     client.bind(`${upn}@it.kmitl.ac.th`, password, (error) => {
         if (error) {
             reject(error)
+            client.unbind()
+            client.destroy()
         }
         else console.log('Authenticated successfully');
     });
     client.search("DC=it,DC=kmitl,DC=ac,DC=th", searchOptions, (error, res) => {
         if (error) {
             reject(error)
+            client.unbind()
+            client.destroy()
         }
         res.on("searchEntry", (entry) => {
             resolve(entry.object)
