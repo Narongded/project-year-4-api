@@ -10,7 +10,11 @@ const loginLdap = (upn, password) => {
         if (error) {
             throw error;
         }
-        else console.log('Authenticated successfully');
+        else {
+            console.log('Authenticated successfully')
+            client.unbind()
+            client.destroy()
+        };
     });
 }
 const searchData = (upn, password) => new Promise((resolve, reject) => {
@@ -33,4 +37,4 @@ const searchData = (upn, password) => new Promise((resolve, reject) => {
         });
     });
 })
-export  { loginLdap, searchData }
+export { loginLdap, searchData }

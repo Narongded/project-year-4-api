@@ -17,7 +17,8 @@ router.post('/', async (req, res, next) => {
             firstname: result.givenName,
             lastname: result.sn,
             email: result.userPrincipalName,
-            role: ldaprole
+            role: ldaprole,
+            uid : result.uSNCreated,
         }
         const token = 'Bearer ' + jwt.sign(
             { email: req.body.email, password: encrypepassword },
