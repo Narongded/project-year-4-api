@@ -17,10 +17,8 @@ export const adminAuth = () => {
         const decrype = new Cryptr('secretepassword');
         const password = decrype.decrypt(payload.password)
         loginLdap(payload.email, password).then((result) => {
-            console.log(result)
             done(null, true);
         }).catch((err) => {
-            console.log(err)
             done(null, false)
         })
     });

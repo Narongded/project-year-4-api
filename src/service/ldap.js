@@ -4,10 +4,10 @@ import ldapjs from 'ldapjs'
 import dotenv from 'dotenv'
 dotenv.config();
 
-const loginLdap = (upn, password) => new Promise((resolve, reject) => {
-    const client = ldapjs.createClient({ url: process.env.LDAP_URL, base: process.env.BASEDN });
+const loginLdap = (upn, password) => new Promise(async (resolve, reject) => {
+    const client = await ldapjs.createClient({ url: process.env.LDAP_URL, base: process.env.BASEDN });
     const searchOptions = { filter: `(&(sAMAccountName=${upn}))`, scope: "sub" }
-    client.bind(`${upn}@it.kmitl.ac.th`, password, (error) => {
+    await client.bind(`${upn}@it.kmitl.ac.th`, password, (error) => {
         if (error) {
             reject(error)
             client.unbind()
@@ -15,7 +15,7 @@ const loginLdap = (upn, password) => new Promise((resolve, reject) => {
         }
         else console.log('Authenticated successfully');
     });
-    client.search("DC=it,DC=kmitl,DC=ac,DC=th", searchOptions, (error, res) => {
+    await client.search("DC=it,DC=kmitl,DC=ac,DC=th", searchOptions, (error, res) => {
         if (error) {
             reject(error)
             client.unbind()
