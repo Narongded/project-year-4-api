@@ -29,7 +29,7 @@ router.get('/getchapter/:uid', (req, res, next) => {
     FROM studentpdf
     INNER JOIN pdf on studentpdf.teacherpdf_tpid = pdf.tpid
     INNER JOIN chapter on chapter.cid = pdf.chapter_cid
-    WHERE studentpdf = ${req.params.uid}`;
+    WHERE alluser_uid = ${req.params.uid}`;
 
     con.query(sql, (err, result, field) => {
 
