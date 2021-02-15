@@ -7,7 +7,9 @@ import generator from 'generate-password'
 import { adminAuth, permit } from '../service/passportAdmin.js';
 import { upload } from '../service/handlefile.js'
 import { rejects } from 'assert';
+import fs from 'fs';
 import con from '../manage/connectdb.js'
+import { Console } from 'console';
 const router = express.Router();
 const app = express();
 
@@ -32,6 +34,48 @@ router.get('/getchapter/:uid', (req, res, next) => {
     con.query(sql, (err, result, field) => {
 
         res.status(200).json({ data: result, status: 'Success' })
+    });
+})
+
+router.post('/upload-studentpdf', (req, res, next) => {
+    const sql = `SELECT * FROM studentpdf
+    WHERE alluser_uid = ${req.body.userid}
+    and teacherpdf_tpid = ${req.body.teacherpdf_tpid}`
+    con.query(sql, (err, result, field) => {
+        if (err || result.length === 0) {
+            const namefile = uid() + '.pdf';
+            const filepdf = req.files.file
+            const insert = "INSERT INTO studentpdf (pdfname,alluser_uid,teacherpdf_tpid) VALUES ?";
+            const values = [
+                [
+                    `${namefile}`,
+                    `${req.body.userid}`,
+                    `${req.body.teacherpdf_tpid}`,
+                ]
+            ];
+            con.query(insert, [values], (err, insertresult) => {
+                if (insertresult.length === 0) return res.status(400).json({ status: 'failed wrong data' })
+                filepdf.mv(path.join(path.resolve(), '/src/public/pdf/') + namefile);
+                return res.status(200).json({ status: 'Success' })
+            });
+        }
+        else {
+            const namefile = uid() + '.pdf';
+            const filepdf = req.files.file
+            const insert = `UPDATE studentpdf SET pdfname = ?
+            WHERE sid = ${result[0].sid}`;
+            const values = [
+                [
+                    `${namefile}`
+                ]
+            ];
+            con.query(insert, [values], (err, resultupdate) => {
+                if (resultupdate.length === 0) return res.status(400).json({ status: 'failed wrong data' })
+                filepdf.mv(path.join(path.resolve(), '/src/public/pdf/') + namefile)
+                fs.unlinkSync(path.join(path.resolve(), '/src/public/pdf/') + result[0].pdfname)
+                return res.status(200).json({ status: 'Success' })
+            });
+        }
     });
 })
 // router.get('/agenda/getall', adminAuth(), permit(['admin', 'staff', 'council', 'guest']), async (req, res, next) => {

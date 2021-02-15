@@ -13,7 +13,6 @@ const loginLdap = (upn, password) => new Promise(async (resolve, reject) => {
             client.unbind()
             client.destroy()
         }
-        else console.log('Authenticated successfully');
     });
     await client.search("DC=it,DC=kmitl,DC=ac,DC=th", searchOptions, (error, res) => {
         if (error) {

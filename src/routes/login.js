@@ -18,12 +18,13 @@ router.post('/', async (req, res, next) => {
             lastname: result.sn,
             email: email,
             role: ldaprole,
-            uid : result.uSNCreated,
+            uid: result.uSNCreated,
         }
         const token = 'Bearer ' + jwt.sign(
             { email: req.body.email, password: encrypepassword },
             'itkmitl',
             { expiresIn: "6h" })
+        console.log('Authenticated successfully');
         return res.status(200).json({
             status: 'Success',
             data: resdata,
