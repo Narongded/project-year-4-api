@@ -14,17 +14,24 @@ const loginLdap = (upn, password) => new Promise(async (resolve, reject) => {
             client.destroy()
         }
     });
-    await client.search("DC=it,DC=kmitl,DC=ac,DC=th", searchOptions, (error, res) => {
+    await client.search(process.env.BASEDN, searchOptions, (error, res) => {
+        let data = {}
         if (error) {
             reject(error)
             client.unbind()
             client.destroy()
         }
-        else res.on("searchEntry", (entry) => {
-            resolve(entry.object)
+        res.on("searchEntry", (entry) => {
+            data = entry.object
+        })
+        res.on("error", function (err) {
+            console.error("error: " + err.message);
+        });
+        res.on("end", function (result) {
+            resolve(data)
             client.unbind()
             client.destroy()
         });
-    });
+    })
 })
 export { loginLdap }

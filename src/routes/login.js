@@ -6,7 +6,7 @@ import { loginLdap } from '../service/ldap.js'
 import Cryptr from 'cryptr'
 const router = express.Router();
 
-router.post('/', async (req, res, next) => {
+router.post('/',  (req, res, next) => {
     loginLdap(req.body.email, req.body.password).then((result) => {
         const cryptr = new Cryptr('secretepassword');
         const encrypepassword = cryptr.encrypt(req.body.password);
