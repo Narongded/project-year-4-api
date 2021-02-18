@@ -38,11 +38,12 @@ router.get('/getdata-lecture/:uid/:cid', (req, res, next) => {
 })
 
 router.get('/getchapter/:uid', (req, res, next) => {
-    const sql = `SELECT *
+    const sql = `SELECT chapter.name, chapter.cid
     FROM studentpdf
     INNER JOIN pdf on studentpdf.teacherpdf_tpid = pdf.tpid
     INNER JOIN chapter on chapter.cid = pdf.chapter_cid
-    WHERE studentpdf.alluser_uid = "${req.params.uid}"`;
+    WHERE studentpdf.alluser_uid = "${req.params.uid}"
+    GROUP BY name`;
     con.query(sql, (err, result, field) => {
         console.log(err)
         console.log(result)

@@ -83,12 +83,12 @@ router.post('/upload-pdf', (req, res, next) => {
 
 
 router.get('/getfile-pdf/:chapterid', (req, res, next) => {
-  
+
     const sql = `SELECT * FROM pdf WHERE chapter_cid = ${req.params.chapterid} `;
 
     con.query(sql, (err, result, field) => {
-     
-        if (err ) return res.status(400).json({ status: 'failed wrong data' })
+
+        if (err) return res.status(400).json({ status: 'failed wrong data' })
         res.status(200).json({ data: result, status: 'Success' })
     });
 })
@@ -103,6 +103,19 @@ router.delete('/delete-pdf/:pdfid', (req, res, next) => {
     });
 })
 
+router.get('/getdata-studentlecture/:pdfid', (req, res, next) => {
+    console.log(req.params.pdfid)
+    const sql = `SELECT studentpdf.alluser_uid, studentpdf.teacherpdf_tpid, pdf.pdfname , studentpdf.spdfname
+    FROM studentpdf
+    INNER JOIN pdf on studentpdf.teacherpdf_tpid = pdf.tpid
+    INNER JOIN chapter on chapter.cid = pdf.chapter_cid
+    WHERE pdf.tpid = ${req.params.pdfid}`;
+    con.query(sql, (err, result, field) => {
+        console.log(err)
+        console.log(result)
+        res.status(200).json({ data: result, status: 'Success' })
+    });
+})
 
 //---------------------------user manager-----------------------------------
 
