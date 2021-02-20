@@ -8,6 +8,7 @@ import userRouter from './routes/user.js';
 import adminRouter from './routes/admin.js';
 import loginRouter from './routes/login.js';
 import regisRouter from './routes/regis.js';
+import questionRouter from './routes/question.js';
 import checktokenRouter from './routes/checktoken.js';
 import fileUpload from 'express-fileupload'
 import './manage/connectdb.js'
@@ -25,6 +26,7 @@ app.use('/static', express.static(path.join(path.resolve(), '/src/public')));
 app.use('/login', loginRouter);
 app.use('/checktoken', checktokenRouter);
 app.use('/regis', regisRouter);
+app.use('/question', questionRouter);
 app.use('/admin', adminRouter);
 app.use('/user', userRouter);
 app.listen(process.env.PORT || 3001, () => {
