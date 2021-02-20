@@ -45,8 +45,6 @@ router.get('/getchapter/:uid', (req, res, next) => {
     WHERE studentpdf.alluser_uid = "${req.params.uid}"
     GROUP BY name`;
     con.query(sql, (err, result, field) => {
-        console.log(err)
-        console.log(result)
         res.status(200).json({ data: result, status: 'Success' })
     });
 })
