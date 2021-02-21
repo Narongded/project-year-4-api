@@ -65,12 +65,13 @@ router.post('/upload-pdf', (req, res, next) => {
     const namefile = uid() + '.pdf';
     const filepdf = req.files.file
     filepdf.mv(path.join(path.resolve(), '/src/public/pdf/') + namefile);
-    const sql = "INSERT INTO pdf (pdfname,chapter_cid,tpdfpath) VALUES ?";
+    const sql = "INSERT INTO pdf (pdfname,chapter_cid,tpdfpath,alluser_uid) VALUES ?";
     const values = [
         [
             `${req.body.pdfname}`,
             `${req.body.chapterid}`,
-            `${namefile}`
+            `${namefile}`,
+            `${req.body.alluser_uid}`
         ]
     ];
     con.query(sql, [values], (err, result) => {

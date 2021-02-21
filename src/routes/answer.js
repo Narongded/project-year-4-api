@@ -15,11 +15,12 @@ const app = express();
 
 
 router.post('/addanswer-pdf', (req, res, next) => {
-    const sql = "INSERT INTO answer (answername,question_qid) VALUES ?";
+    const sql = "INSERT INTO answer (answername,question_qid,ans_alluser_uid) VALUES ?";
     const values = [
         [
             `${req.body.answer}`,
-            `${req.body.qid}`
+            `${req.body.qid}`,
+            `${req.body.alluser_uid}`
         ]
     ];
     con.query(sql, [values], (err, result) => {

@@ -15,7 +15,7 @@ const app = express();
 
 
 router.post('/addquestion-pdf', (req, res, next) => {
-    const sql = "INSERT INTO question (name,alluser_uid,page,pdfid) VALUES ?";
+    const sql = "INSERT INTO question (name,ques_alluser_uid,page,pdfid) VALUES ?";
     const values = [
         [
             `${req.body.question}`,
@@ -32,14 +32,43 @@ router.post('/addquestion-pdf', (req, res, next) => {
 })
 
 router.get('/getquestion-pdf/:pdfid', (req, res, next) => {
-    const sql = `SELECT * from question
-    LEFT JOIN answer on question.qid = answer.question_qid
-    WHERE pdfid = ${req.params.pdfid}`;
+    const sql = `SELECT question.name as questionname,answer.answername,
+    question.qid,answer.aid,question.page,answer.ans_alluser_uid,question.ques_alluser_uid,
+    studentpdf.alluser_uid as sownerpdf,pdf.alluser_uid as townerpdf
+    from question 
+    LEFT JOIN answer on question.qid = answer.question_qid 
+    left join pdf on question.pdfid = pdf.tpid 
+    left join studentpdf on question.pdfid = studentpdf.sid 
+    WHERE pdfid = ${req.params.pdfid} `;
     con.query(sql, (err, result) => {
         console.log(err)
         if (err) return res.status(400).json({ status: 'failed wrong data' })
         res.status(200).json({ data: result, status: 'Success' })
     });
 })
+
+router.put('/update-question/:qid', (req, res, next) => {
+    const sql = `UPDATE question SET name = ? WHERE qid = ${req.params.qid}`;
+    const values = [
+        [
+            `${req.body.answername}`,
+        ]
+    ];
+    con.query(sql, [values], (err, result) => {
+        if (err || result.length === 0) return res.status(400).json({ status: 'failed wrong data' })
+        console.log("Number of records inserted: " + result.affectedRows);
+        res.status(200).json({ status: 'Success' })
+    });
+})
+
+router.delete('/delete-question/:qid', (req, res, next) => {
+    const sql = `DELETE from question WHERE qid=${req.params.qid}`;
+    con.query(sql, (err, result) => {
+        console.log(err)
+        if (err) res.status(400).json({ status: 'failed wrong data' })
+        res.status(200).json({ status: 'Success' })
+    });
+})
+
 
 export default router
