@@ -30,12 +30,16 @@ router.post('/addquestion-pdf', (req, res, next) => {
         res.status(200).json({ status: 'Success' })
     });
 })
+
 router.get('/getquestion-pdf/:pdfid', (req, res, next) => {
-    const sql = `SELECT * from question WHERE pdfid = ${req.params.pdfid}`;
+    const sql = `SELECT * from question
+    LEFT JOIN answer on question.qid = answer.question_qid
+    WHERE pdfid = ${req.params.pdfid}`;
     con.query(sql, (err, result) => {
         console.log(err)
         if (err) return res.status(400).json({ status: 'failed wrong data' })
         res.status(200).json({ data: result, status: 'Success' })
     });
 })
+
 export default router
