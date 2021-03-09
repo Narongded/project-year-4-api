@@ -65,13 +65,13 @@ router.post('/upload-pdf', (req, res, next) => {
     const namefile = uid() + '.pdf';
     const filepdf = req.files.file
     filepdf.mv(path.join(path.resolve(), '/src/public/pdf/') + namefile);
-    const sql = "INSERT INTO pdf (pdfname,chapter_cid,tpdfpath,alluser_uid) VALUES ?";
+    const sql = "INSERT INTO pdf (tpid,pdfname,chapter_cid,tpdfpath,alluser_uid) VALUES ?";
     const values = [
-        [
-            `${req.body.pdfname}`,
-            `${req.body.chapterid}`,
-            `${namefile}`,
-            `${req.body.alluser_uid}`
+        [`${uid()}`,
+        `${req.body.pdfname}`,
+        `${req.body.chapterid}`,
+        `${namefile}`,
+        `${req.body.alluser_uid}`
         ]
     ];
     con.query(sql, [values], (err, result) => {
@@ -95,10 +95,10 @@ router.get('/getfile-pdf/:chapterid', (req, res, next) => {
 })
 
 router.delete('/delete-pdf/:pdfid', (req, res, next) => {
-    const sql = `DELETE FROM pdf WHERE tpid=${req.params.pdfid}`;
+    const sql = `DELETE FROM pdf WHERE tpid= "${req.params.pdfid}"`;
 
     con.query(sql, (err, result) => {
-
+      
         if (err || result.length === 0) return res.status(400).json({ status: 'failed wrong data' })
         res.status(200).json({ status: 'Success' })
     });
@@ -110,7 +110,7 @@ router.get('/getdata-studentlecture/:pdfid', (req, res, next) => {
     FROM studentpdf
     INNER JOIN pdf on studentpdf.teacherpdf_tpid = pdf.tpid
     INNER JOIN chapter on chapter.cid = pdf.chapter_cid
-    WHERE pdf.tpid = ${req.params.pdfid}`;
+    WHERE pdf.tpid = "${req.params.pdfid}"`;
     con.query(sql, (err, result, field) => {
         console.log(err)
         console.log(result)

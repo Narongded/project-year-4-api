@@ -15,13 +15,14 @@ const app = express();
 
 
 router.post('/addquestion-pdf', (req, res, next) => {
-    const sql = "INSERT INTO question (name,ques_alluser_uid,page,pdfid) VALUES ?";
+    const sql = "INSERT INTO question (name,ques_alluser_uid,page,pdfid,studentpdf_sid) VALUES ?";
     const values = [
         [
             `${req.body.question}`,
             `${req.body.uid}`,
             `${req.body.page}`,
-            `${req.body.pdfid}`
+            `${req.body.pdfid}`,
+            `${req.body.studentpdfpath}`
         ]
     ];
     con.query(sql, [values], (err, result) => {
@@ -32,14 +33,14 @@ router.post('/addquestion-pdf', (req, res, next) => {
 })
 
 router.get('/getquestion-pdf/:pdfid', (req, res, next) => {
-    const sql = `SELECT question.name as questionname,answer.answername,
-    question.qid,answer.aid,question.page,answer.ans_alluser_uid,question.ques_alluser_uid,
+    const sql = `SELECT question.name as questionname,answer.answername,question.studentpdf_sid,
+    pdf.tpid as teacherpdfid,question.qid,answer.aid,question.page,answer.ans_alluser_uid,question.ques_alluser_uid,
     studentpdf.alluser_uid as sownerpdf,pdf.alluser_uid as townerpdf
     from question 
     LEFT JOIN answer on question.qid = answer.question_qid 
     left join pdf on question.pdfid = pdf.tpid 
     left join studentpdf on question.pdfid = studentpdf.sid 
-    WHERE pdfid = ${req.params.pdfid} `;
+    WHERE pdfid = "${req.params.pdfid}" `;
     con.query(sql, (err, result) => {
         console.log(err)
         if (err) return res.status(400).json({ status: 'failed wrong data' })

@@ -15,7 +15,7 @@ const app = express();
 
 
 router.get('/getfile-pdf/:pdfid', (req, res, next) => {
-    const sql = `SELECT * FROM pdf WHERE tpid = ${req.params.pdfid} `;
+    const sql = `SELECT * FROM pdf WHERE tpid = "${req.params.pdfid}" `;
     con.query(sql, (err, result, field) => {
         res.status(200).json({ data: result, status: 'Success' })
     });
@@ -27,7 +27,7 @@ router.get('/getfile-lecture/:pdfid', (req, res, next) => {
     });
 })
 router.get('/getdata-lecture/:uid/:cid', (req, res, next) => {
-    const sql = `SELECT * 
+    const sql = `SELECT * ,  studentpdf.alluser_uid as studentid
     FROM studentpdf
     INNER JOIN pdf on studentpdf.teacherpdf_tpid = pdf.tpid
     INNER JOIN chapter on chapter.cid = pdf.chapter_cid
@@ -45,6 +45,7 @@ router.get('/getchapter/:uid', (req, res, next) => {
     WHERE studentpdf.alluser_uid = "${req.params.uid}"
     GROUP BY name`;
     con.query(sql, (err, result, field) => {
+        console.log(err)
         res.status(200).json({ data: result, status: 'Success' })
     });
 })
@@ -53,15 +54,16 @@ router.post('/upload-studentpdf', (req, res, next) => {
     if (req.files === null) return res.status(400).json({ status: 'File PDF not found' })
     const sql = `SELECT * FROM studentpdf
     WHERE alluser_uid = "${req.body.userid}"
-    and teacherpdf_tpid = ${req.body.teacherpdf_tpid}`
+    and teacherpdf_tpid = "${req.body.teacherpdf_tpid}"`
     con.query(sql, (err, result, field) => {
         console.log(err)
         if (err || result.length === 0) {
             const namefile = uid() + '.pdf';
             const filepdf = req.files.file
-            const insert = "INSERT INTO studentpdf (spdfname,alluser_uid,teacherpdf_tpid) VALUES ?";
+            const insert = "INSERT INTO studentpdf (sid,spdfname,alluser_uid,teacherpdf_tpid) VALUES ?";
             const values = [
                 [
+                    `${uid()}`,
                     `${namefile}`,
                     `${req.body.userid}`,
                     `${req.body.teacherpdf_tpid}`,
