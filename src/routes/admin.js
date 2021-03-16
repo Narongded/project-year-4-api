@@ -94,11 +94,16 @@ router.get('/getfile-pdf/:chapterid', (req, res, next) => {
     });
 })
 
+
+
+
+
+
 router.delete('/delete-pdf/:pdfid', (req, res, next) => {
     const sql = `DELETE FROM pdf WHERE tpid= "${req.params.pdfid}"`;
 
     con.query(sql, (err, result) => {
-      
+
         if (err || result.length === 0) return res.status(400).json({ status: 'failed wrong data' })
         res.status(200).json({ status: 'Success' })
     });
@@ -106,7 +111,7 @@ router.delete('/delete-pdf/:pdfid', (req, res, next) => {
 
 router.get('/getdata-studentlecture/:pdfid', (req, res, next) => {
     console.log(req.params.pdfid)
-    const sql = `SELECT studentpdf.alluser_uid, studentpdf.teacherpdf_tpid, pdf.pdfname , studentpdf.spdfname
+    const sql = `SELECT studentpdf.alluser_uid, studentpdf.teacherpdf_tpid, pdf.pdfname , studentpdf.spdfname,studentpdf.sid
     FROM studentpdf
     INNER JOIN pdf on studentpdf.teacherpdf_tpid = pdf.tpid
     INNER JOIN chapter on chapter.cid = pdf.chapter_cid

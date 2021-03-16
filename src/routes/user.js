@@ -34,7 +34,7 @@ router.get('/getdata-lecture/:uid/:cid', (req, res, next) => {
     LEFT JOIN file on file.pdfid = studentpdf.sid
     WHERE studentpdf.alluser_uid = "${req.params.uid}" and chapter.cid = ${req.params.cid}`;
     con.query(sql, (err, result, field) => {
-        console.log(result[0].file.split("|").length)
+
         res.status(200).json({ data: result, status: 'Success' })
     });
 })
@@ -51,7 +51,18 @@ router.get('/getchapter/:uid', (req, res, next) => {
         res.status(200).json({ data: result, status: 'Success' })
     });
 })
+router.get('/getdatafile-pdf/:pdfid', (req, res, next) => {
 
+    const sql = `SELECT GROUP_CONCAT(CONCAT('\[\',file.filename,'\,\',file.type,'\]\') SEPARATOR '|') AS file FROM studentpdf
+    LEFT JOIN file on file.pdfid = studentpdf.sid
+    WHERE studentpdf.sid = "${req.params.pdfid}" `;
+
+    con.query(sql, (err, result, field) => {
+        console.log(err)
+        if (err) return res.status(400).json({ status: 'failed wrong data' })
+        res.status(200).json({ data: result, status: 'Success' })
+    });
+})
 
 router.post('/upload-file/:pdfid', (req, res, next) => {
     const sql1 = `SELECT * FROM file
@@ -78,10 +89,22 @@ router.post('/upload-file/:pdfid', (req, res, next) => {
             });
         }
         else {
-            const filepdf = req.files.file
-            fs.unlinkSync(path.join(path.resolve(), '/src/public/file/') + result[0].filename)
-            filepdf.mv(path.join(path.resolve(), '/src/public/file/') + result[0].filename)
-            return res.status(200).json({ status: 'Success' })
+            const namefile2 = req.files.file.mimetype.includes("-")
+                ? uid() + "." + req.files.file.mimetype.split("-")[1]
+                : uid() + "." + req.files.file.mimetype.split("/")[1]
+            const sql2 = `UPDATE file 
+            SET filename = "${namefile2}"
+            WHERE pdfid = "${req.params.pdfid}"
+            and type = "${req.body.type}"`
+            con.query(sql2, (err, insertresult, field) => {
+                console.log(err)
+                if (err) return res.status(400).json({ status: 'failed wrong data' })
+                const filepdf = req.files.file
+                fs.unlinkSync(path.join(path.resolve(), '/src/public/file/') + result[0].filename)
+                filepdf.mv(path.join(path.resolve(), '/src/public/file/') + namefile2)
+                return res.status(200).json({ status: 'Success' })
+            });
+
         }
     });
 
