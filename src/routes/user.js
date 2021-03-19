@@ -104,13 +104,8 @@ router.post('/upload-file/:pdfid', (req, res, next) => {
                 filepdf.mv(path.join(path.resolve(), '/src/public/file/') + namefile2)
                 return res.status(200).json({ status: 'Success' })
             });
-
         }
     });
-
-
-
-
 })
 
 router.post('/upload-studentpdf', (req, res, next) => {
