@@ -40,7 +40,7 @@ router.get('/getdata-lecture/:uid/:cid', (req, res, next) => {
 })
 
 router.get('/getchapter/:uid', (req, res, next) => {
-    const sql = `SELECT chapter.name, chapter.cid
+    const sql = `SELECT chapter.name, chapter.cid, studentpdf.teacherpdf_tpid
     FROM studentpdf
     INNER JOIN pdf on studentpdf.teacherpdf_tpid = pdf.tpid
     INNER JOIN chapter on chapter.cid = pdf.chapter_cid
