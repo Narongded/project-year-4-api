@@ -32,9 +32,9 @@ router.get('/getdata-lecture/:uid/:cid', (req, res, next) => {
     INNER JOIN pdf on studentpdf.teacherpdf_tpid = pdf.tpid
     INNER JOIN chapter on chapter.cid = pdf.chapter_cid
     LEFT JOIN file on file.pdfid = studentpdf.sid
-    WHERE studentpdf.alluser_uid = "${req.params.uid}" and chapter.cid = ${req.params.cid}`;
+    WHERE studentpdf.alluser_uid = "${req.params.uid}" and chapter.cid = ${req.params.cid}
+    GROUP BY studentpdf.sid`;
     con.query(sql, (err, result, field) => {
-
         res.status(200).json({ data: result, status: 'Success' })
     });
 })
@@ -47,7 +47,6 @@ router.get('/getchapter/:uid', (req, res, next) => {
     WHERE studentpdf.alluser_uid = "${req.params.uid}"
     GROUP BY name`;
     con.query(sql, (err, result, field) => {
-        console.log(err)
         res.status(200).json({ data: result, status: 'Success' })
     });
 })
@@ -58,7 +57,6 @@ router.get('/getdatafile-pdf/:pdfid', (req, res, next) => {
     WHERE studentpdf.sid = "${req.params.pdfid}" `;
 
     con.query(sql, (err, result, field) => {
-        console.log(err)
         if (err) return res.status(400).json({ status: 'failed wrong data' })
         res.status(200).json({ data: result, status: 'Success' })
     });
@@ -97,7 +95,6 @@ router.post('/upload-file/:pdfid', (req, res, next) => {
             WHERE pdfid = "${req.params.pdfid}"
             and type = "${req.body.type}"`
             con.query(sql2, (err, insertresult, field) => {
-                console.log(err)
                 if (err) return res.status(400).json({ status: 'failed wrong data' })
                 const filepdf = req.files.file
                 fs.unlinkSync(path.join(path.resolve(), '/src/public/file/') + result[0].filename)

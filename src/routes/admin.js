@@ -22,7 +22,6 @@ router.post('/create-chapter', (req, res, next) => {
     con.query(sql, [values], (err, result) => {
 
         if (err || result.length === 0) return res.status(400).json({ status: 'failed wrong data' })
-        console.log("Number of records inserted: " + result.affectedRows);
         res.status(200).json({ status: 'Success' })
     });
 })
@@ -36,7 +35,6 @@ router.put('/update-chapter/:chapterid', (req, res, next) => {
     ];
     con.query(sql, [values], (err, result) => {
         if (err || result.length === 0) return res.status(400).json({ status: 'failed wrong data' })
-        console.log("Number of records inserted: " + result.affectedRows);
         res.status(200).json({ status: 'Success' })
     });
 })
@@ -75,9 +73,7 @@ router.post('/upload-pdf', (req, res, next) => {
         ]
     ];
     con.query(sql, [values], (err, result) => {
-        console.log(err)
         if (err || result.length === 0) return res.status(400).json({ status: 'failed wrong data' })
-        console.log("Number of records inserted: " + result.affectedRows);
         return res.status(200).json({ status: 'Success' })
     });
 })
@@ -110,15 +106,12 @@ router.delete('/delete-pdf/:pdfid', (req, res, next) => {
 })
 
 router.get('/getdata-studentlecture/:pdfid', (req, res, next) => {
-    console.log(req.params.pdfid)
     const sql = `SELECT studentpdf.alluser_uid, studentpdf.teacherpdf_tpid, pdf.pdfname , studentpdf.spdfname,studentpdf.sid
     FROM studentpdf
     INNER JOIN pdf on studentpdf.teacherpdf_tpid = pdf.tpid
     INNER JOIN chapter on chapter.cid = pdf.chapter_cid
     WHERE pdf.tpid = "${req.params.pdfid}"`;
     con.query(sql, (err, result, field) => {
-        console.log(err)
-        console.log(result)
         res.status(200).json({ data: result, status: 'Success' })
     });
 })
