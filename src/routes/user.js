@@ -40,7 +40,7 @@ router.get('/getdata-lecture/:uid/:cid', (req, res, next) => {
 })
 
 router.get('/getchapter/:uid', (req, res, next) => {
-    const sql = `SELECT chapter.name, chapter.cid, studentpdf.teacherpdf_tpid
+    const sql = `SELECT chapter.name, chapter.cid,  chapter.teacher,studentpdf.teacherpdf_tpid
     FROM studentpdf
     INNER JOIN pdf on studentpdf.teacherpdf_tpid = pdf.tpid
     INNER JOIN chapter on chapter.cid = pdf.chapter_cid
@@ -137,6 +137,15 @@ router.post('/upload-studentpdf', (req, res, next) => {
             return res.status(200).json({ status: 'Success' })
         }
     });
+})
+
+router.delete('/delete-pdf/:sid', (req, res, next) => {
+    const sql = `DELETE from studentpdf where sid = "${req.params.sid}"`;
+    con.query(sql, (err, result, field) => {
+        if (err) return res.status(400).json({ status: 'failed wrong data' })
+        return res.status(200).json({ status: 'Success' })
+    });
+
 })
 
 export default router

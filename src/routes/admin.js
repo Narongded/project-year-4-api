@@ -11,12 +11,12 @@ const router = express.Router();
 const app = express();
 //-------------------------------------login----------------------------------
 router.post('/create-chapter', (req, res, next) => {
-    const sql = "INSERT INTO chapter (name,uid) VALUES ?";
+    const sql = "INSERT INTO chapter (name,uid,teacher) VALUES ?";
     const values = [
         [
             `${req.body.chaptername}`,
-            `${req.body.uid}`
-
+            `${req.body.uid}`,
+            `${req.body.teacher}`
         ]
     ];
     con.query(sql, [values], (err, result) => {
