@@ -11,6 +11,7 @@ import regisRouter from './routes/regis.js';
 import questionRouter from './routes/question.js';
 import answerRouter from './routes/answer.js';
 import checktokenRouter from './routes/checktoken.js';
+import settingRouter from './routes/setting.js';
 import fileUpload from 'express-fileupload'
 import './manage/connectdb.js'
 const app = express();
@@ -28,6 +29,7 @@ app.use('/login', loginRouter);
 app.use('/checktoken', checktokenRouter);
 app.use('/regis', regisRouter);
 app.use('/question', questionRouter);
+app.use('/setting', settingRouter);
 app.use('/answer', answerRouter);
 app.use('/admin', adminRouter);
 app.use('/user', userRouter);

@@ -145,7 +145,14 @@ router.delete('/delete-pdf/:sid', (req, res, next) => {
         if (err) return res.status(400).json({ status: 'failed wrong data' })
         return res.status(200).json({ status: 'Success' })
     });
-
 })
-
+router.post('/point/:sid', (req, res, next) => {
+    const sql = `UPDATE studentpdf
+    SET point = (SELECT point FROM  studentpdf WHERE sid = "${req.params.sid}" )+${req.body.point}
+    WHERE sid = "${req.params.sid}"`;
+    con.query(sql, (err, result, field) => {
+        if (err) return res.status(400).json({ status: 'failed wrong data' })
+        return res.status(200).json({ status: 'Success' })
+    });
+})
 export default router
