@@ -105,6 +105,16 @@ router.post('/upload-file/:pdfid', (req, res, next) => {
     });
 })
 
+router.delete('/delete-file/:pdfid', (req, res, next) => {
+    const sql = `DELETE FROM file 
+    WHERE pdfid = "${req.params.pdfid}" 
+    and type = "${req.body.type}"`
+    con.query(sql, (err, result, field) => {
+        if (err) return res.status(400).json({ status: 'failed wrong data' })
+        return res.status(200).json({ status: 'Success' })
+    })
+})
+
 router.post('/upload-studentpdf', (req, res, next) => {
     if (req.files === null) return res.status(400).json({ status: 'File PDF not found' })
     const sql = `SELECT * FROM studentpdf
