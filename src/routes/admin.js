@@ -11,29 +11,34 @@ const router = express.Router();
 const app = express();
 //-------------------------------------login----------------------------------
 router.post('/create-chapter', (req, res, next) => {
-    const sql = "INSERT INTO chapter (name,uid,teacher) VALUES ?";
+    const sql = "INSERT INTO chapter (subjectid,name,semester,year,uid,teacher) VALUES ?";
     const values = [
         [
+            `${req.body.subjectid}`,
             `${req.body.chaptername}`,
+            `${req.body.semester}`,
+            `${req.body.year}`,
             `${req.body.uid}`,
             `${req.body.teacher}`
         ]
     ];
     con.query(sql, [values], (err, result) => {
 
-        if (err || result.length === 0) return res.status(400).json({ status: 'failed wrong data' })
+        if (err || result.length === 0) return res.status(400).json({ status: 'failed wrong data', err })
         res.status(200).json({ status: 'Success' })
     });
 })
 
 router.put('/update-chapter/:chapterid', (req, res, next) => {
-    const sql = `UPDATE chapter SET name = ? WHERE cid = ${req.params.chapterid}`;
+    const sql = `UPDATE chapter SET subjectid=?,name=?,semester=?,year=? WHERE cid = ?`;
     const values = [
-        [
-            `${req.body.chaptername}`,
-        ]
+        `${req.body.subjectid}`,
+        `${req.body.chaptername}`,
+        `${req.body.semester}`,
+        `${req.body.year}`,
+        `${req.params.chapterid}`
     ];
-    con.query(sql, [values], (err, result) => {
+    con.query(sql, values, (err, result) => {
         if (err || result.length === 0) return res.status(400).json({ status: 'failed wrong data' })
         res.status(200).json({ status: 'Success' })
     });
@@ -76,6 +81,34 @@ router.post('/upload-pdf', (req, res, next) => {
         if (err || result.length === 0) return res.status(400).json({ status: 'failed wrong data' })
         return res.status(200).json({ status: 'Success' })
     });
+})
+
+router.post('/update-pdf/:pdfid', (req, res, next) => {
+    if (req.files !== null) {
+        const namefile = uid() + '.pdf';
+        const filepdf = req.files.file
+        filepdf.mv(path.join(path.resolve(), '/src/public/pdf/') + namefile);
+        const sql = "UPDATE pdf SET pdfname=?,tpdfpath=? WHERE tpid = ?";
+        const values = [
+            `${req.body.pdfname}`,
+            `${namefile}`,
+            `${req.params.pdfid}`
+        ];
+        con.query(sql, values, (err, result) => {
+            if (err || result.length === 0) return res.status(400).json({ status: 'failed wrong data', err })
+            return res.status(200).json({ status: 'Success' })
+        });
+    } else {
+        const sql = "UPDATE pdf SET pdfname=? WHERE tpid = ?";
+        const values = [
+            `${req.body.pdfname}`,
+            `${req.params.pdfid}`
+        ];
+        con.query(sql, values, (err, result) => {
+            if (err || result.length === 0) return res.status(400).json({ status: 'failed wrong data', err })
+            return res.status(200).json({ status: 'Success' })
+        });
+    }
 })
 
 
