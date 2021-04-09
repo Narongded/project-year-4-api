@@ -56,10 +56,10 @@ router.post('/add-people/:listid', (req, res, next) => {
         });
 
         var mailOptions = {
-            from: '60070023@it.kmitl.ac.th',
-            to: '60070023@it.kmitl.ac.th',
-            subject: 'Email From System ',
-            text: `คุณถูกรับเชิญเข้าสู่เลคเชอร์โน๊ตของคุณ ${req.body.owner} ลิงค์ http://localhost:3000/student-chapter/${req.body.owner}`
+            from: `${req.body.owner.split("it")[1]}@it.kmitl.ac.th`,
+            to: `${req.body.email.split("it")[1]}@it.kmitl.ac.th`,
+            subject: 'Invite to Access',
+            text: `${req.body.owner} is inviting to access to the following profile: http://localhost:3000/student-chapter/${req.body.owner}`
         };
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {

@@ -14,6 +14,12 @@ const router = express.Router();
 const app = express();
 
 
+router.get('/getprofile/:uid', (req, res, next) => {
+    const sql = `SELECT alluser_uid FROM studentpdf WHERE alluser_uid = "${req.params.uid}"`;
+    con.query(sql, (err, result, field) => {
+        res.status(200).json({ data: result, status: 'Success' })
+    });
+})
 router.get('/getfile-pdf/:pdfid', (req, res, next) => {
     const sql = `SELECT * FROM pdf WHERE tpid = "${req.params.pdfid}" `;
     con.query(sql, (err, result, field) => {
