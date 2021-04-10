@@ -36,17 +36,11 @@ router.put('/shared/:uid', (req, res, next) => {
         res.status(200).json({ status: 'Success' })
     });
 })
-
-router.post('/add-people/:listid', (req, res, next) => {
-    const sql = `insert into lecturesharedlist (lecturesharetoggle_sharedtoggleid,alluser_uid) VALUES ?`;
-    const values = [
-        [
-            `${req.params.listid}`,
-            `${req.body.email}`
-        ]
-    ];
-    con.query(sql, [values], (err, result) => {
-        if (err || result.length === 0) return res.status(400).json({ status: 'failed wrong data' })
+router.put('/accept-shared/:sharedlistid', (req, res, next) => {
+    const sql = `UPDATE lecturesharedlist set status = 1 where sharedlistid = "${req.params.sharedlistid}" `;
+    con.query(sql, (err, result) => {
+        console.log(err)
+        if (err) return res.status(400).json({ status: 'failed wrong data' })
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -54,14 +48,13 @@ router.post('/add-people/:listid', (req, res, next) => {
                 pass: 'jackkubpom55'
             }
         });
-
         var mailOptions = {
             from: `${req.body.owner.split("it")[1]}@it.kmitl.ac.th`,
             to: `${req.body.email.split("it")[1]}@it.kmitl.ac.th`,
             subject: 'Invite to Access',
             text: `${req.body.owner} is inviting to access to the following profile: http://localhost:3000/student-chapter/${req.body.owner}`
         };
-        transporter.sendMail(mailOptions, function (error, info) {
+        transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.log(error);
             } else {
@@ -70,6 +63,52 @@ router.post('/add-people/:listid', (req, res, next) => {
         });
         res.status(200).json({ status: 'Success' })
     });
+})
+
+router.post('/add-people/:listid', (req, res, next) => {
+    const sql2 = `SELECT * FROM  lecturesharedlist WHERE alluser_uid = "${req.body.email}" and 
+    lecturesharetoggle_sharedtoggleid = ${req.params.listid}`;
+    con.query(sql2, (err, result) => {
+        if (err) return res.status(400).json({ status: 'failed wrong data' })
+        if (result.length === 0) {
+            const sql = `insert into lecturesharedlist (lecturesharetoggle_sharedtoggleid,alluser_uid,status) VALUES ?`;
+            const values = [
+                [
+                    `${req.params.listid}`,
+                    `${req.body.email}`,
+                    1
+                ]
+            ];
+            con.query(sql, [values], (err, result2) => {
+                if (err) return res.status(400).json({ status: 'failed wrong data' })
+                const transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: 'slackdevtool002@gmail.com',
+                        pass: 'jackkubpom55'
+                    }
+                });
+                var mailOptions = {
+                    from: `${req.body.owner.split("it")[1]}@it.kmitl.ac.th`,
+                    to: `${req.body.email.split("it")[1]}@it.kmitl.ac.th`,
+                    subject: 'Invite to Access',
+                    text: `${req.body.owner} is inviting to access to the following profile: http://localhost:3000/student-chapter/${req.body.owner}`
+                };
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        console.log(error);
+                    } else {
+                        console.log('Email sent: ' + info.response);
+                    }
+                });
+                res.status(200).json({ status: 'Success' })
+            });
+        }
+        else {
+            res.status(200).json({ status: 'Success' })
+        }
+    })
+
 })
 
 router.delete('/delete-people/:sharedlistid', (req, res, next) => {
