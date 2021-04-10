@@ -14,12 +14,6 @@ const router = express.Router();
 const app = express();
 
 
-router.get('/getprofile/:uid', (req, res, next) => {
-    const sql = `SELECT alluser_uid FROM studentpdf WHERE alluser_uid = "${req.params.uid}"`;
-    con.query(sql, (err, result, field) => {
-        res.status(200).json({ data: result, status: 'Success' })
-    });
-})
 router.get('/getfile-pdf/:pdfid', (req, res, next) => {
     const sql = `SELECT * FROM pdf WHERE tpid = "${req.params.pdfid}" `;
     con.query(sql, (err, result, field) => {
@@ -46,7 +40,8 @@ router.get('/getdata-lecture/:uid/:cid', (req, res, next) => {
 })
 
 router.get('/getchapter/:uid', (req, res, next) => {
-    const sql = `SELECT chapter.name, chapter.cid, chapter.subjectid, chapter.semester, chapter.year, chapter.teacher,studentpdf.teacherpdf_tpid
+    const sql = `SELECT chapter.name, chapter.cid, chapter.subjectid, chapter.semester, chapter.year, chapter.teacher,
+    studentpdf.teacherpdf_tpid, studentpdf.alluser_uid
     FROM studentpdf
     INNER JOIN pdf on studentpdf.teacherpdf_tpid = pdf.tpid
     INNER JOIN chapter on chapter.cid = pdf.chapter_cid
