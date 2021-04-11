@@ -35,7 +35,7 @@ router.post('/addquestion-pdf', (req, res, next) => {
 router.get('/getquestion-pdf/:pdfid', (req, res, next) => {
     const sql = `SELECT question.name as questionname,answer.answername,question.studentpdf_sid,
     pdf.tpid as teacherpdfid,question.qid,answer.aid,question.page,answer.ans_alluser_uid,question.ques_alluser_uid,
-    studentpdf.sid as sownerpdf,pdf.alluser_uid as townerpdf, studentpdf.sid
+    studentpdf.alluser_uid as sownerpdf,pdf.alluser_uid as townerpdf, studentpdf.sid
     from question 
     LEFT JOIN answer on question.qid = answer.question_qid 
     LEFT join pdf on question.pdfid = pdf.tpid 
