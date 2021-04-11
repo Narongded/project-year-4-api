@@ -51,8 +51,8 @@ router.put('/accept-shared/:sharedlistid', (req, res, next) => {
         var mailOptions = {
             from: `${req.body.owner.split("it")[1]}@it.kmitl.ac.th`,
             to: `${req.body.email.split("it")[1]}@it.kmitl.ac.th`,
-            subject: 'Invite to Access',
-            text: `${req.body.owner} is inviting to access to the following profile: http://localhost:3000/student-chapter/${req.body.owner}`
+            subject: 'Accept for Access',
+            text: `${req.body.owner} is accepting access to the following profile: http://localhost:3000/student-chapter/${req.body.owner}`
         };
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
@@ -92,7 +92,7 @@ router.post('/add-people/:listid', (req, res, next) => {
                     from: `${req.body.owner.split("it")[1]}@it.kmitl.ac.th`,
                     to: `${req.body.email.split("it")[1]}@it.kmitl.ac.th`,
                     subject: 'Invite to Access',
-                    text: `${req.body.owner} is inviting to access to the following profile: http://localhost:3000/student-chapter/${req.body.owner}`
+                    text: `${req.body.owner.split("it")[1]} is inviting to access to the following profile: http://localhost:3000/student-chapter/${req.body.owner}`
                 };
                 transporter.sendMail(mailOptions, (error, info) => {
                     if (error) {
