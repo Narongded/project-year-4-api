@@ -40,7 +40,8 @@ router.get('/getquestion-pdf/:pdfid', (req, res, next) => {
     LEFT JOIN answer on question.qid = answer.question_qid 
     LEFT join pdf on question.pdfid = pdf.tpid 
     LEFT join studentpdf on question.ques_alluser_uid = studentpdf.alluser_uid 
-    WHERE pdfid = "${req.params.pdfid}" `;
+    WHERE pdfid = "${req.params.pdfid}"
+    GROUP by questionname`;
     con.query(sql, (err, result) => {
         console.log(err)
         if (err) return res.status(400).json({ status: 'failed wrong data' })
