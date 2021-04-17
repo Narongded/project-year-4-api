@@ -139,7 +139,9 @@ router.delete('/delete-pdf/:pdfid', (req, res, next) => {
 })
 
 router.get('/getdata-studentlecture/:pdfid', (req, res, next) => {
-    const sql = `SELECT studentpdf.alluser_uid, studentpdf.teacherpdf_tpid, pdf.pdfname , studentpdf.spdfname,studentpdf.sid
+    const sql = `SELECT studentpdf.alluser_uid, 
+    studentpdf.point,
+    studentpdf.teacherpdf_tpid, pdf.pdfname , studentpdf.spdfname,studentpdf.sid
     FROM studentpdf
     INNER JOIN pdf on studentpdf.teacherpdf_tpid = pdf.tpid
     INNER JOIN chapter on chapter.cid = pdf.chapter_cid
